@@ -1,0 +1,183 @@
+{% load endless %}
+{% load common_tags %}
+
+{% paginate 1 campaigns using "ads_page" %}
+<div class="account-entry-wrapper entry-wrapper">
+    {% for campaign in campaigns %}
+        <div class="detailed-view" >
+            <div class="left">
+                <table>
+                    <tr>
+                        <td>Campaign Name:</td>
+                        <td>{{ campaign.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>
+                            {% if campaign.is_active %}
+                                Active
+                            {% else %}
+                                {% if not campaign.enough_money %}
+                                    Not enough money                        
+                                {% endif %}
+                                {% if campaign.is_finished %}
+                                    Finished
+                                {% endif %}
+                                {% if campaign.is_future %}
+                                    Future
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Owner</td>
+                        <td>
+                            {{ campaign.account.user.username }}
+                            {% if campaign.venue_account %}
+                                ({{ campaign.venue_account }})
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Started:</td>
+                        <td>{{ campaign.started|date:"b j, Y"|capfirst }}</td>
+                    </tr>
+                    <tr>
+                        <td>Ended:</td>
+                        <td>
+                            {% if campaign.is_finished %}
+                                Finished
+                            {% elif campaign.active_to %}
+                                {{ campaign.active_to|date:"b j, Y"|capfirst }}
+                            {% else %}
+                                Ongoing
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="right">
+                <table>
+                    <tr>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Amount Spent:</td>
+                        <td>{{ campaign.ammount_spent }}</td>
+                    </tr>
+                    <tr>
+                        <td>Amount Remaining:</td>
+                        <td>
+                            {% if campaign.enough_money %}
+                                {{ campaign.ammount_remaining }}
+                            {% else %}
+                                C$0
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Regions:</td>
+                        <td>
+                            {% if campaign.all_of_canada %}
+                                All of Canada
+                            {% else %}
+                                {{ campaign.regions_representation }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Edit:</td>
+                        <td>
+                            <a href="{% url 'advertising_edit_campaign' campaign.id %}">
+                                <img src="/static/images/edit-icon.png"/>
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <table class="profile-table ads-stats" celpadding="0" cellspacing="0">
+            <tr>
+                <th class="action">Banner</th>
+                <th class="action">Size of Ad</th>
+                <th class="action">Impressions</th>
+                <th class="action">Clicks</th>
+                {% if settings.ADVERTISING_TYPE_CPC_ON %}<th class="action">CPC</th>{% endif %}
+                <th class="action">CPM</th>
+            </tr>
+            {% for ad in campaign.advertising_set.all %}
+            <tr class="ad-line">
+                <td class="action">
+                    <div class="image">
+                        <a href="/media/{{ ad.image }}" class="advertising-image" target="_blank">
+                            <img class="ads-thumb" width="30" src="/media/{{ ad.image }}" alt="" />
+                        </a>
+                    </div>
+                </td>
+                <td class="action">
+                    {{ ad.ad_type.name }}<br>
+                    {{ ad.ad_type.width }}x{{ ad.ad_type.height }}
+                </td>
+                <td class="action">
+                    {{ ad.views }}
+                </td>
+                <td class="action">
+                    {{ ad.clicks }}
+                </td>
+                {% if settings.ADVERTISING_TYPE_CPC_ON %}
+                <td class="action">
+                    {{ ad.cpc_price }}
+                </td>
+                {% endif %}
+                <td class="action">
+                    {{ ad.cpm_price }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>        
+    {% empty %}
+        <p>You have no ads.</p>
+        <p>You can <a href="{% url 'advertising_setup' %}">create</a> new advertising campaign</p>
+
+    {% endfor %}
+    {% if pages|length > 1 %}
+        <div class="entry-navigation-np">
+            <p>
+                <ul>
+                    {% get_pages %}
+
+                    <li class="step-links">
+                        {% if pages.current.is_first %}
+                            <span class="prev">
+                                prev
+                            </span>
+                        {% else %}
+                            <a href="{{ pages.previous.url }}" class="prev">
+                                prev
+                            </a>
+                        {% endif %}
+
+                        {% for page in pages %}
+                            {% if page|args:10|call:'is_in_range' %}
+                                <a href="{{ page.url }}"
+                                    class="page{% if page.is_current %} current{%endif%}">
+                                    {{ page.number }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if pages.current.is_last %}
+                            <span class="next">
+                                next
+                            </span>
+                        {% else %}
+                            <a href="{{ pages.next.url }}" class="next">
+                                next
+                            </a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </p>
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,70 @@
+{% extends 'base-with-advertising.html' %}
+{% load date_formatting %}
+{% load advertising_tags %}
+{% load gears %}
+
+{% block meta %}
+    <title>{{ venue_account.venue.name }}</title>
+    <meta name="keywords" content="{{ venue_account.tags_as_string }}" />
+    <meta name="description" content="{{ venue_account.short_description }}" />
+{% endblock meta %}
+
+{% block head %}
+    {% css_asset_tag "view-venue-combine.css" %}
+
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places&language=en"></script>
+    <script>
+        var venue_account_id = {{ venue_account.id }}
+            venue_account_latitude = {{ venue_account.venue.location.y }},
+            venue_account_longtitude = {{ venue_account.venue.location.x }};
+    </script>
+    {% js_asset_tag "view-venue-combine.js" %}
+
+{% endblock %}
+
+{% block advertising %}
+    <div>
+        <div class="rotation-right-container">
+            {% advertising_group "300x250|300x600|300x100" %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block page %}
+    <h1>
+        {{ venue_account.venue.name }}
+    </h1>
+    <div class="account-profile account-primary-content">
+        <div class="primary-wrapper">
+            {% include "actions/venue_actions.html" %}
+            {% include "venue_accounts/_venue_details.html" %}
+
+            {% if venue_account.tags.count > 0 %}
+                <div class="tags">
+                    {% for tag in venue_account.tags.all %}
+                        <a href="{% url 'event_browse' %}?function=tags&tag={{ tag.name|urlencode }}">{{ tag }}</a>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="tabs-container">
+                <table class="tabs" data-page-id="public-venue-account" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td data-tab-id="venue-events" {% if active_tab == "venue-events" %}class="current"{% endif %}>
+                            <span>{{ venue_account.venue.name }} Events</span>
+                        </td>
+                        <td data-tab-id="venue-featured-events" {% if active_tab == "venue-featured-events" %}class="current"{% endif %}>
+                            <span>Featured Events</span>
+                        </td>
+                    </tr>
+                </table>
+                <div class="box{% if active_tab == "venue-events" %} visible{% endif %}">
+                    {% include 'venue_accounts/_venue_events_table.html' %}
+                </div>
+                <div class="box{% if active_tab == "venue-featured-events" %} visible{% endif %}">
+                    {% include 'venue_accounts/_venue_public_featured_events_table.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

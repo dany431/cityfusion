@@ -1,0 +1,23 @@
+{% load location %}
+{% load cropping %}
+{% load common_tags %}
+
+<div class="venue-item__title">
+    <a href="{% url "public_venue_account" venue_account.slug %}">
+        {{ venue_account.venue.name }}
+    </a>
+</div>
+<div class="picture">
+    <a href="{% url "public_venue_account" venue_account.slug %}">
+        {% if venue_account.picture %}
+            <img src="{% cropped_thumbnail venue_account "cropping" width=160 %}" height="160" width="160" alt="" />
+        {% else %}
+            <img src="/static/images/default-event.jpg" height="160" width="160" alt="" />
+        {% endif %}
+    </a>
+</div>
+<div class="venue-item__address">
+    <span title="{{ venue_account.venue.address }}">
+        {{ venue_account.venue.address|shorten_string:31 }}
+    </span>
+</div>

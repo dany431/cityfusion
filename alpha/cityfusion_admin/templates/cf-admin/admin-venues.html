@@ -1,0 +1,69 @@
+{% extends 'cf-admin/base.html' %}
+{% load admin_menu %}
+{% load endless %}
+{% load cf_pagination %}
+
+{% block head %}
+    <link href="{{STATIC_URL}}styles/profile-table.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block page %}
+    <div class="tabs-container">
+        {% cf_admin_menu "venues" %}
+        <div class="box visible">
+            <h1>
+                Search venues
+            </h1>
+            <form method="post" name="search-events" >
+                {% csrf_token %}
+                Please, provide part of venue title <br/>
+                <input name="search" placeholder="Title" value="{{ search }}"/>
+                <input type="submit" value="Search" />
+            </form>
+
+            <table class="profile-table" celpadding="0" cellspacing="0">
+                <tr>
+                    <th>
+                        <a href="?order=name">
+                            Venue
+                        </a>
+                    </th>
+                     <th>
+                        <a href="?order=user">
+                            User
+                        </a>
+                    </th>
+                    <th width="50%">Actions</th>
+                </tr>
+
+                {% paginate 15 venues %}
+
+                {% for venue in venues %}
+                <tr>
+                    <td>
+                        {{ venue.name }}
+                    </td>
+                    <td>
+                        {{ venue.user.username }}
+                    </td>
+                    <td>
+                        <a href="{% url 'admin_edit_venue' venue.id %}" title="Edit venue">
+                            <img src="/static/images/edit-icon.png"/>
+                        </a>
+                        <a href="{% url 'admin_delete_venue' venue.id %}" title="Delete venue">
+                            <img src="/static/images/delete-icon.png"/>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">
+                            No venues was found
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% cf_pagination %}
+        </div>
+    </div>
+{% endblock %}

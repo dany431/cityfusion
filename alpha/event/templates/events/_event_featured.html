@@ -1,0 +1,30 @@
+{% load endless %}
+{% load cropping %}
+{% load featured_event %}
+{% load common_tags %}
+
+{% if featured_events %}
+<div class="featured-area">
+    <div class="features-wrapper" data-no-turbolink>
+        <div class="featured-events-viewer">
+            <div class="featured-events-viewer-content">
+                {% featured_events_container featured_events %}
+            </div>
+        </div>
+    </div>
+    <h2>Featured Events</h2>
+
+    <div class="features-navigation">
+        <ul>
+            <li class="step-links">
+                <a class="prev" href="javascript: void(0);">
+                    prev
+                </a>
+                <a class="next"  href="javascript: void(0);">
+                    next
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endif %}

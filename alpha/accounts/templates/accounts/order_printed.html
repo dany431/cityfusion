@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang='en_US' class="preview">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>City Fusion Invoice</title>
+    <link href="{{ STATIC_URL }}styles/orders/printed.css" media="all" rel="stylesheet" type="text/css" />
+    {{ STYLES|safe }}
+</head>
+<body>
+    <div class="printed-wrapper">
+        <table class="printed-logo-table">
+            <tr>
+                <td class="printed-logo-right">
+                    <div class="printed-logo">
+                        <img alt="" src="{{ STATIC_URL }}images/logo.png">
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="printed-content">
+            <h1 class="printed-main-title">Invoice</h1>
+            <table class="printed-columns-table">
+                <tr>
+                    <td>
+                        <div class="printed-company-info">
+                            Cityfusion Ent. Inc.<br/>
+                            322 Gustin Cres<br/>
+                            Saskatoon, SK<br/>
+                            S7K6J8<br/>
+                            <br/>
+                            fuse@cityfusion.ca<br/>
+                            GST# 851846089RT0001
+                        </div>
+                    </td>
+                    <td class="printed-column-right">
+                        <div class="printed-number-table-block">
+                            <table class="printed-number-table">
+                                <tr class="grey"><td>Invoice Reference No.</td></tr>
+                                <tr><td>#{{ order.id }}</td></tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="printed-details">
+                <div class="printed-billed">
+                    <h2>Account billed:</h2>
+                    {{ user.first_name }} {{ user.last_name }} ({{ user.email }})
+                </div>
+            </div>
+            <div class="printed-items">
+                <div class="printed-period">
+                    Time period: {{ order.created|date:"M d" }}
+                </div>
+                <table>
+                    <tr class="grey">
+                        <th>Name</th>
+                        <th class="price">Price (CAD)</th>
+                    </tr>
+                    <tr>
+                        <td>{{ order }}</td>
+                        <td class="price">{{ order.cost_value }}</td>
+                    </tr>
+                    {% if order.bonus %}
+                        <tr>
+                            <td>Bonus</td>
+                            <td class="price">{{ order.bonus }}</td>
+                        </tr>
+                    {% endif %}
+                    {% for tax in order.taxes.all %}
+                    <tr>
+                        <td>{{ tax.tax_name }}</td>
+                        <td class="price">{{ tax.cost }}</td>
+                    </tr>
+                    {% endfor %}
+                    
+                    <tr class="grey">
+                        <td>Total Price</td>
+                        <td class="price">{{ order.total_price }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="printed-sign">
+                Please contact billing@cityfusion.ca with any questions related to this invoice.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

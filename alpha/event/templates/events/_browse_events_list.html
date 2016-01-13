@@ -1,0 +1,69 @@
+{% load date_formatting %}
+{% load endless %}
+{% load cropping %}
+{% load event_tags %}
+{% load common_tags %}
+
+<div class="entry-wrapper">
+    <header class="total">
+        Total search numbers{% if location_name %} for "{{ location_name }}",{% endif %} ({{eventsFilter.qs.count}})
+    </header>
+    {% paginate 8 eventsFilter.qs as events %}
+    {% regroup events by start_time|date:"h:i A" as events_start_time_group %}
+
+    {% for event_group in events_start_time_group %}
+        <header class="time-group">
+            <span>
+                {{ event_group.grouper }}
+            </span>
+        </header>
+        {% for event in event_group.list %}
+            <div class="entry-info home-page{% if not forloop.first %} another{% endif %}"
+                 data-no-turbolink
+                 itemscope
+                 itemtype="http://data-vocabulary.org/Event">
+                {% short_single_event event %}
+            </div>
+        {%endfor%}
+    {% endfor %}
+
+    {% if eventsFilter.qs.count > 0 %}
+        <div class="entry-navigation-np">
+            <ul>
+                {% get_pages %}
+
+                <li class="step-links">
+                    {% if pages.current.is_first %}
+                        <span class="prev">
+                            prev
+                        </span>
+                    {% else %}
+                        <a href="{{ pages.previous.url }}" class="prev">
+                            prev
+                        </a>
+                    {% endif %}
+
+                    {% for page in pages %}
+                        {% if page|args:10|call:'is_in_range' %}
+                            <a href="{{ page.url }}"
+                                class="page{% if page.is_current %} current{%endif%}">
+                                {{ page.number }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if pages.current.is_last %}
+                        <span class="next">
+                            next
+                        </span>
+                    {% else %}
+                        <a href="{{ pages.next.url }}" class="next">
+                            next
+                        </a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+    
+</div>

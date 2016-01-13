@@ -1,0 +1,38 @@
+.advertising-with-margin {
+	margin-top: 35px;
+}
+
+
+.rotation-right-container {
+    float: left;
+    margin-left: 10px;
+}
+
+.home .rotation-right-container {
+	position: absolute;
+	right: 0;
+}
+
+.rotation-right {
+    padding: 4px;
+    background: #ffffff;
+    border: 1px solid #c5c5c5;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.rotation-right.first {
+    margin-top: 0;
+}
+
+.home .rotation-right.first {
+    margin-top: 0;
+}
+
+.rotation-right a {
+    display: block;
+}
+
+.rotation-right img {
+    display: block;
+}

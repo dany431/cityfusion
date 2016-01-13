@@ -1,0 +1,45 @@
+{% extends 'base-with-advertising.html' %}
+{% block meta %}
+    <title>City Fusion - {{ page_info.meta_title }}</title>
+    <meta name="keywords" content="{{ page_info.meta_keywords }}" />
+    <meta name="description" content="{{ page_info.meta_description }}" />
+{% endblock meta %}
+
+{% block head %}
+    <link type="text/css" href="{{STATIC_URL}}css/feedback.css" rel="stylesheet" />
+{% endblock %}
+
+{% block page %}
+    <h1>Feedback/Contact Form</h1>
+    <div class="primary-content item-primary-content">
+        <div class="primary-wrapper">
+            <div class="main-content">
+                <div class="inner-content">
+                    <form id="contact" method="post">
+                        {% csrf_token %}
+                        <table>
+                            {% for field in form %}
+                                <tr>
+                                    <td class="label-td">{{ field.label_tag }}</td>
+                                    <td>
+                                        {{ field }}
+                                        {% for error in field.errors %}<span class="error">{{ error }}</span> {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <input type="submit" class="button" value="Send">
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(".type-dropdown").qap_dropdown();
+    </script>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% load endless %}
+{% load event_tags %}
+{% load common_tags %}
+
+{% paginate per_page events using "account_events" %}
+
+<div class="account-entry-wrapper entry-wrapper account-events-list" data-id="event_container">
+    <div class="events-actions-row">
+        <div class="dropdown events-actions-row__action-dropdown"
+             data-dropdown-class="events-actions-row__action-dropdown-options">
+            <select autocomplete="off" data-id="action_select">
+                <option value="post_selected_to_fb">Post selected to FB</option>
+                <option value="bind_selected_to_venue">Bind selected to the venue</option>
+            </select>
+        </div>
+        <div class="dropdown events-actions-row__venue-dropdown"
+             style="display:none;"
+             data-id="venue_select"
+             data-dropdown-class="events-actions-row__venue-dropdown-options">
+            <select>
+                {% for venue_account in profile.venueaccount_set.all %}
+                    <option value="{{ venue_account.id }}"
+                            data-venue-link="{% url 'public_venue_account' venue_account.slug %}">
+                        {{ venue_account.venue.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <input type="button"
+               value="Execute"
+               class="button standart submit nomargin events-actions-row__execute"
+               data-id="execute_button" />
+        <a href="javascript:void(0);" class="balloon">
+            <div class="buttonq"></div>
+        </a>
+        <div class="balloon-content" style="display:none;">
+            <p>
+                Due to limitations of Facebook, you may wish to adjust your event in Facebook. If Facebook fixes these issues we will incorporate them. eg: event location and Event photo.
+            </p>
+        </div>
+        <a href="{% url 'import_facebook_events' %}"
+           target="_blank"
+           class="button events-actions-row__fb_import">
+            Import from Facebook
+        </a>
+    </div>
+    <div class="select-buttons">
+        <a href="javascript:void(0);"
+           data-id="select_all_button"
+           class="select-buttons__item">
+            Select | Deselect all
+        </a>
+        <br/><br/>
+    </div>
+    {% for event in events %}
+        <div class="entry-info with-actions"
+             data-type="event_item"
+             data-event-id="{{ event.event.id }}"
+             data-single-event-id="{{ event.id }}"
+             {% if event.facebook_event %}data-facebook-event-id="{{ event.facebook_event.eid }}"{% endif %}>
+
+            {% short_single_event event %}
+
+            <div class="venue-title" data-type="venue_title">
+                {% if event.venue_account_owner %}
+                    by
+                    <a href="{% url 'public_venue_account' event.venue_account_owner.slug %}">
+                        {{ event.venue_account_owner.venue.name }}
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="event-edit-actions">
+                <a class="event-edit-actions__item"
+                   href="{% url 'event_edit' event.authentication_key %}">
+                    Edit
+                </a>
+                <a class="event-edit-actions__item"
+                   href="{% url 'event_copy' event.authentication_key %}">
+                    Copy
+                </a>
+                <a class="event-edit-actions__item event-edit-actions__item_pos_last event-delete-action"
+                   href="{% url 'event_remove' event.authentication_key %}"
+                   data-is-featured="{% if event.has_featured %}1{% else %}0{% endif %}">
+                    Delete
+                </a>
+                {% if not event.is_featured %}
+                    <a class="event-edit-actions__item event-edit-actions__item_size_wide event-edit-actions__item_pos_last"
+                       href="{% url 'event_setup_featured' event.authentication_key %}">
+                        Make Featured Event
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="clr"></div>
+        </div>
+    {%endfor%}
+</div>
+
+{% if pages|length > 1 %}
+    <div class="profile-table-pagination">
+        <span class="pagintation-wrapper">
+            {% get_pages %}
+
+            <span class="events-displayed-title">
+                Events Displayed
+            </span>
+            <div class="dropdown per-page-dropdown"
+                 data-dropdown-class="per-page-dropdown-options">
+                <select data-id="per_page_select">
+                    <option {% if per_page == 6 %}selected{% endif %}
+                            value="{{ pages.current|args:6|call:'per_page_url' }}">
+                        6
+                    </option>
+                    <option {% if per_page == 20 %}selected{% endif %}
+                            value="{{ pages.current|args:20|call:'per_page_url' }}">
+                        20
+                    </option>
+                    <option {% if per_page == 50 %}selected{% endif %}
+                            value="{{ pages.current|args:50|call:'per_page_url' }}">
+                        50
+                    </option>
+                    <option {% if per_page == 100 %}selected{% endif %}
+                            value="{{ pages.current|args:100|call:'per_page_url' }}">
+                        100
+                    </option>
+                </select>
+            </div>
+
+            <span class="pagination">
+                <span class="pagination__list">
+                    {% if pages.current.is_first %}
+                        <span class="pagination__item pagination__item_pos_prev pagination__item_type_filled">
+                            prev
+                        </span>
+                    {% else %}
+                        <a href="{{ pages.previous.url }}"
+                           class="pagination__item pagination__item_pos_prev pagination__item_type_filled">
+                            prev
+                        </a>
+                    {% endif %}
+
+                    {% for page in pages %}
+                        {% if page|args:10|call:'is_in_range' %}
+                            <a href="{{ page.url }}"
+                                class="pagination__item pagination__item_type_page{% if page.is_current %} pagination__item_pos_current{%endif%}">
+                                {{ page.number }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if pages.current.is_last %}
+                        <span class="pagination__item pagination__item_pos_next pagination__item_type_filled">
+                            next
+                        </span>
+                    {% else %}
+                        <a href="{{ pages.next.url }}"
+                           class="pagination__item pagination__item_pos_next pagination__item_type_filled">
+                            next
+                        </a>
+                    {% endif %}
+                </span>
+            </span>
+        </span>
+    </div>
+{% endif %}
+<div data-type="hidden_elements" style="display:none;">
+    <input type="hidden" value="{% url 'refresh_facebook_graph' %}" data-id="refresh_graph_url" />
+    <input type="hidden" value="{% url 'event_post_to_facebook_ajax' %}" data-id="post_to_facebook_url" />
+    <input type="hidden" value="{% url 'event_bind_to_venue' %}" data-id="bind_to_venue_url" />
+    {% csrf_token %}
+    <img class="mini-indicator" src="{{ STATIC_URL }}images/mini-ajax-loader.gif" data-id="mini_indicator" />
+    <input class="checkbox-field" type="checkbox" data-type="event_check" />
+    <a class="facebook-event-link" target="_blank" data-type="facebook_event_link">
+        <img src="{{ STATIC_URL }}images/facebook-icon-mini.png" />
+    </a>
+    <div class="modal-choice-window" data-id="choice_window">
+        <div class="row title">I want to publish event as:</div>
+        <div class="row">
+            <input type="radio" name="fb_owner_type" value="user" autocomplete="off" checked data-type="fb_owner_type"> User
+        </div>
+        <div class="row">
+            <input type="radio" name="fb_owner_type" value="page" autocomplete="off" data-type="fb_owner_type"> Page
+            <select data-id="fb_pages_select" style="display:none;"></select>
+        </div>
+        <div class="row btn">
+            <input type="button" value="Ok" data-id="fb_post_ok" />
+        </div>
+    </div>
+</div>

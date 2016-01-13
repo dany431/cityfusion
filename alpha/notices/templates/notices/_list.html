@@ -1,0 +1,15 @@
+{% load endless %}
+{% load notices_tags %}
+
+<div class="notices-list">
+    {% if notices|length %}
+
+        {% for notice in notices %}
+            {% notice_item notice %}
+        {% endfor %}
+
+    {% endif %}
+    <div data-type="hidden_elements" style="display:none;">
+        <input type="hidden" value="{% url 'read_notice' %}" data-id="read_notice_url" />
+    </div>
+</div>

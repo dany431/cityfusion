@@ -1,0 +1,53 @@
+{% extends 'pages/base.html' %}
+
+{% block head %}
+    <link type="text/css" href="{{STATIC_URL}}styles/static_pages.css" rel="stylesheet" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/static_pages.js"></script>
+{% endblock %}
+
+{% block page %}
+    <h1>Advertising</h1>
+    <div class="primary-content item-primary-content">
+        <div class="advertising-item">
+            <div class="advertising-item__inner">
+                <h2 class="advertising-item__title">Featured Events</h2>
+                <img class="advertising-item__image" src="{{ STATIC_URL }}images/fe_img.png" alt="" />
+                <div class="advertising-item__description">
+                    These types of ads display across the top of the home page.
+                    These are designed to catch the attention of the user towards your event.
+                    They show up randomly with each new page and can be browsed through by clicking
+                    the arrow in the Featured Events box. They also show up in the reminder and "in the loop"
+                    emails. They cost $2.00 per day. You can find the option to make an event featured in the
+                    quick access box on the event itself or in your account info page under the Events Tab.
+                </div>
+                <div class="advertising-item__buttons">
+                    <a class="advertising-item__button"
+                       href="{% if user.is_authenticated %}{% url 'userena_profile_detail' user.username %}{% else %}{% url 'userena_signin' %}{% endif %}">
+                        purchase ads
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="advertising-item advertising-item_margin_yes">
+            <div class="advertising-item__inner">
+                <h2 class="advertising-item__title">Cost per Mile (CPM)</h2>
+                <img class="advertising-item__image" src="{{ STATIC_URL }}images/cpm_img.png" alt="" />
+                <div class="advertising-item__description">
+                    Also known as cost per thousand. These ads you pay for a certain number of impressions.
+                    How this work is: for every 1000 impressions you would pay $ .50 to $3.00 depending on
+                    the size of the ad. So if you chose to spend $1000.00, your advertisement would be displayed
+                    500,000 times across the screens of the viewers (based on .50 ad). This can be found in your
+                    account page titled "Create New Ad". A reminder will be emailed to you when your funds are
+                    getting low.
+                </div>
+                <div class="advertising-item__buttons">
+                    <a class="advertising-item__button"
+                       href="{% url 'advertising_setup' %}">
+                        purchase ads
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="clr"></div>
+    </div>
+{% endblock page %}

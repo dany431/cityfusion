@@ -1,0 +1,156 @@
+{% load endless %}
+{% load cf_pagination %}
+
+
+{% paginate 10 campaigns_filter.qs as campaigns %}
+<table class="profile-table" celpadding="0" cellspacing="0">
+    <tr>
+        <th class="action">
+            Campaign Name
+            <div class="sort-wrapper">
+                <a class="sortable icon-sort-by-alphabet" data-order="name" href="javascript:void"></a>
+                <a class="sortable icon-sort-by-alphabet-alt" data-order="-name" href="javascript:void"></a>
+            </div>
+        </th>
+        <th class="action">Owner</th>
+        <th class="action">Status/Active period</th>
+        <th class="action">            
+            <table class="ads-list-table" cellpadding="0" cellspacing="0">
+                <th><!--Image--></th>
+                <th class="action">Impressions</th>
+                <th class="action">Clicks</th>
+                {% if settings.ADVERTISING_TYPE_CPC_ON %}<th class="action">CPC</th>{% endif %}
+                <th class="action">CPM</th>
+            </table>
+        </th>        
+        <th class="action">Budget</th>
+        <th class="action">Amount Spent</th>
+        <th class="action">Amount Remaining</th>
+        <th class="action">Regions</th>
+        <th class="action">Actions</th>
+    </tr>
+    <tr>
+        <form action="" method="get">
+        <td>
+            {{ campaigns_filter.form.name }}
+        </td>
+        <td>
+            <input type="text" name="account" class="user-input" data-ajax-url="{% url 'admin_user_autocomplete' %}" value="{{ selected_account.id }}" data-user-name="{{ selected_account.user }}" />
+        </td>
+        <td>
+            Enough money?<br>
+            {{ campaigns_filter.form.enough_money }}<br>
+            Free?<br>
+            {{ campaigns_filter.form.free }}<br>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>        
+        <td>
+            {{ campaigns_filter.form.o }}
+            <div class="button show-all">
+                Show all
+            </div>
+            <input type="submit" value="Search" class="button">
+        </td>
+        </form>
+    </tr>
+    {% for campaign in campaigns %}
+        <tr>
+            <td class="action">
+                {{ campaign.name }}
+            </td>
+            <td class="action">
+                {{ campaign.account.user }}
+            </td>
+            <td class="action">
+                {% if campaign.is_active %}
+                    <div>Active{% if campaign.free %}(free){% endif %}</div>
+                    {% if campaign.free %}
+                        <div>
+                            <a href="{% url "deactivate_free_campaign" campaign.id %}">Deactivate</a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    {% if not campaign.enough_money %}
+                        <div>Not enough money</div>
+                        <div>
+                            <a href="{% url "activate_free_campaign" campaign.id %}">Free activation</a>
+                        </div>
+                    {% endif %}
+                    {% if campaign.is_finished %}
+                        <div>Finished</div>
+                    {% endif %}
+                    {% if campaign.is_future %}
+                        <div>Future</div>
+                    {% endif %}
+                {% endif %}
+                <br>
+                {% if campaign.active_from and campaign.active_to %}
+                    {{ campaign.active_from|date:"b j, Y"|capfirst }} - {{ campaign.active_to|date:"b j, Y"|capfirst }}
+                {% elif campaign.active_from %}
+                    Active from {{ campaign.active_from|date:"b j, Y"|capfirst }}
+                {% elif campaign.active_to %}
+                    Active till {{ campaign.active_to|date:"b j, Y"|capfirst }}
+                {% endif %}
+            </td>
+            <td class="action">
+                <table class="ads-list-table" cellpadding="0" cellspacing="0">
+                    {% for ad in campaign.advertising_set.all %}
+                        <tr>
+                            <td class="action">
+                                <div class="image">
+                                    <a href="/media/{{ ad.image }}" class="advertising-image" target="_blank">
+                                        <img class="ads-thumb" width="30" src="/media/{{ ad.image }}" alt="" />
+                                    </a>
+                                </div>
+                            </td>
+                            <td class="action">{{ ad.views }}</td>
+                            <td class="action">{{ ad.clicks }}</td>
+                            {% if settings.ADVERTISING_TYPE_CPC_ON %}<td>{{ ad.cpc_price }}</td>{% endif %}
+                            <td class="action">{{ ad.cpm_price }}</td>
+                        </tr>                        
+                    {% endfor %}
+                </table>
+                
+            </td>
+            <td>{{ campaign.budget }}</td>
+            <td>{{ campaign.ammount_spent }}</td>
+            <td>
+                {% if campaign.enough_money %}
+                    {{ campaign.ammount_remaining }}
+                {% else %}
+                    C$0
+                {% endif %}
+            </td>
+            <td class="action">
+                {% if campaign.all_of_canada %}
+                    All of Canada
+                {% else %}
+                    {{ campaign.regions_representation }}
+                {% endif %}
+
+            </td>
+            <td class="action">
+                <div>
+                    <a href="{% url 'admin_share_stats' campaign.id %}">
+                        Share
+                    </a>
+                </div>
+                <a href="{% url 'admin_advertising_edit_campaign' campaign.id %}">
+                    <img src="/static/images/edit-icon.png"/>
+                </a>
+                <a href="{% url 'admin_advertising_remove_campaign' campaign.id %}" class="danger">
+                    <img src="/static/images/delete-icon.png"/>
+                </a>
+            </td>
+        </tr>
+    {% empty %}
+    <tr>
+        <td colspan="9">No ads was found</td>
+    </tr>
+    {% endfor %}
+</table>
+{% cf_pagination %}

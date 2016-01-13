@@ -1,0 +1,28 @@
+{% load date_formatting %}
+{% load endless %}
+{% load cropping %}
+{% load event_tags %}
+{% load cf_pagination %}
+
+{% paginate 6 events using 'archived_events_page' %}
+<div class="account-entry-wrapper entry-wrapper">
+    {% for event in events %}
+        <div class="entry-info with-actions">
+            {% short_single_event event %}
+
+            <div class="event-edit-actions">
+                <a class="event-edit-actions__item"
+                   href="{% url 'event_copy' event.authentication_key %}">
+                    Copy
+                </a>
+            </div>
+
+            <div class="clr"></div>
+        </div>    
+    {% empty %}
+        <p>
+            Archive is empty
+        </p>
+    {%endfor%}
+    {% cf_pagination %}
+</div>

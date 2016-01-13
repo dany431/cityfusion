@@ -1,0 +1,16 @@
+<div class="similar-events-wrapper" data-more-events-url="{% url 'more_events' event.id %}">
+    <header>
+        More Events
+    </header>
+    <div class="similar-events" data-id="similar_items_container">
+        <div class="indicator-block">
+            <img src="{{ STATIC_URL }}images/event/blue-ajax-loader.gif"/>
+        </div>
+    </div>
+
+    <div class="similar-events-viewer-controls">
+        <div class="next"><i class="blue-arrow blue-arrow_pos_next"></i></div>
+        <div class="prev"><i class="blue-arrow blue-arrow_pos_prev"></i></div>
+        <span class="page-no">1</span> of <span id="similar-events-total"></span>
+    </div>
+</div>

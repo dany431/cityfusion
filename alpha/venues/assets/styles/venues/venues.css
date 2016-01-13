@@ -1,0 +1,148 @@
+.venues-wrapper {
+    display: inline-block;    
+    width: 687px;    
+    background: #fff;
+    float: left;
+    position: relative;
+    min-height: 999px
+}
+
+.venues-wrapper .entry-navigation-np {
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+}
+
+.venues-wrapper header.venue-types {
+    background: #c6c6c6;
+    height: 50px;
+    margin-bottom: 25px;
+}
+
+.venues-wrapper header.venue-types span.title {
+    text-transform: uppercase;
+    color: #022e52;
+    margin-left: 25px;
+    height: 50px;
+    line-height: 50px;
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.venues-list {    
+    padding: 20px 25px;
+    min-height: 909px;
+}
+
+.no-item {
+    color: #022e52;
+    margin-left: 25px;
+}
+
+.venue-items {
+    padding: 22px 67px 0 48px;
+}
+
+.venue-items .entry-navigation-np {
+
+}
+
+.venue-item {
+    vertical-align: top;
+    padding: 0;
+    float: left;
+    width: 160px;
+    margin: 0 0 30px 29px;
+    -webkit-box-shadow: 4px 4px 4px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    4px 4px 4px 0px rgba(50, 50, 50, 0.75);
+    box-shadow:         4px 4px 4px 0px rgba(50, 50, 50, 0.75);
+}
+
+.venue-item a {
+    display: block;
+}
+
+.venue-item .map-preview,
+.venue-item .details {
+    float: left;
+}
+
+.venue-item .map-preview {
+    border-top: 1px solid #000;
+    border-left: 1px solid #000;
+    border-right: 1px solid #878787;
+    border-bottom: 1px solid #878787;
+}
+
+.venue-item .picture img {
+    display: block;
+}
+
+.venue-item .map-preview {
+    margin-left: 5px;
+}
+
+.venue-item .details {
+    position: relative;
+    margin-left: 30px;
+    margin-top: 30px;
+    color: #000;
+    font-size: 12px;
+}
+
+.venue-item .details header {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.venue-item__title {
+    background: #013e6f;
+    text-align: center;
+    height: 25px;
+    line-height: 25px;
+}
+
+.venue-item__title a {
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.venue-item__title a:hover {
+    text-decoration: underline;
+}
+
+.venue-item__address {
+    background: #013e6f;
+    font-size: 14px;
+    color: #ffffff;
+    padding: 10px 10px 9px;
+    border-bottom: 1px solid #757575;
+    min-height: 32px;
+}
+
+.venue-type-dropdown {
+    width: 520px;
+    margin-left: 15px;
+    height: 24px;
+    line-height: 24px;    
+}
+
+.venue-type-dropdown .dropdown-label {
+    padding-left: 20px;
+}
+
+.venue-type-dropdown:after {
+    top: 2px;
+}
+
+.venue-type-dropdown-list {
+    width: 545px;
+}
+
+.venue-type-dropdown-list .dropdown-child {
+    padding-left: 25px;
+    height: 24px;
+    line-height: 24px;
+}
+

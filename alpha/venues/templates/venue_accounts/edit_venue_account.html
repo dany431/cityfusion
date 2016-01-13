@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load date_formatting %}
+{% load cropping %}
+{% load gears %}
+
+{% block head %}
+    <link href="{{STATIC_URL}}ajaxuploader/css/fileuploader.css" rel="stylesheet" type="text/css" />
+    <link href="{{STATIC_URL}}image_cropping/css/jquery.Jcrop.min.css" rel="stylesheet" type="text/css" />
+    {% css_asset_tag "edit-venue-combine.css" %}
+
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places&language=en"></script>
+    
+    <script src="{{STATIC_URL}}selectable/js/jquery.dj.selectable.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var crsf_token = "{{ csrf_token }}";
+    </script>
+
+    {% js_asset_tag "edit-venue-combine.js" %}
+    
+    {{ form.map }}
+    {{ form.media.js }}
+{% endblock %}
+
+
+{% block title %} 
+    &gt; Browse 
+    {% if page_date != "flow" %}&gt; {{page_date|slug_to_title }}{% endif %}
+{% endblock %}
+
+
+{% block page %}    
+<form method="post">
+    <div class="venue-account-details">
+        <h1>
+            {{ venue_account.venue.name }}
+        </h1>        
+        <div class="venue-account-details-form">
+            {% csrf_token %}
+            {{ form.linking_venue_mode }}
+
+            <div class="field venue-field entity-form__text-field">
+                <header class="entity-form__field-title">
+                    Venue
+                </header>
+                <div class="venue-account-venue-name{% if change_venue %} hidden{% endif %}">
+                    {{ form.place.value.full }}
+                    <div class="venue-account-location-actions">
+                        <a href="javascript:void(0);" data-id="change_venue_link">Change</a>
+                        {% if is_venue_owner and venue_account.venue.suggested %}
+                            <a target="_blank" href="{% url 'edit_venue' venue_account.venue.id %}">
+                                Edit location
+                            </a>
+                        {% endif %}
+                    </div>
+                    <input type="hidden" data-id="venue_changing_indicator" name="change_venue" value="0" />
+                </div>
+                <div class="venue-wrapper{% if not change_venue %} hidden{% endif %}">
+                    {{ form.place }}
+                    <a href="javascript:void(0);" class="show-map"></a>
+                    <div class="suggest">
+                        <div class="error">
+                            All fields is required
+                        </div>
+                        <table>
+                            <tr>
+                                <td>Venue name</td>
+                                <td class="content-input-text" data-id="venue_name">
+                                    {{form.venue_name}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Street address</td>
+                                <td class="content-input-text" data-id="venue_street">
+                                    {{form.street}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>City</td>
+                                <td class="content-input-text" data-id="venue_city">
+                                    {{form.city}}
+                                    {{form.city_identifier}}
+                                </td>
+                            </tr>
+                            <tr data-id="suggest_map_container">
+                                <td>Location</td>
+                                <td>
+                                    <div class="location_map">{{form.location}}</div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="cancel-button">Cancel</div>
+                        <div class="reset-button">Clear</div>
+                        <div class="submit-button">Submit</div>
+                    </div>
+                </div>
+            </div>
+
+            {{ form.venue_identifier }}
+
+            <div class="field">
+                <header class="entity-form__field-title">Picture</header>
+                <div class="picture-thumb">
+                    <img src="" class="preview">
+                </div>
+                {{ form.picture_src }}
+                <div class='full-screen-popup' data-thumb-width="180" data-thumb-height="180">
+                    {{ form.cropping }}
+                    <div class='save-button'>Save image</div>
+                    <div class='cancel-button'>Cancel</div>
+                </div>
+                {% for error in form.picture_src.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="field entity-form__text-field">
+                <header class="entity-form__field-title">Phone</header>
+                {{ form.phone }}
+                {% for error in form.phone.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="field entity-form__text-field">
+                <header class="entity-form__field-title">Fax</header>
+                {{ form.fax }}
+                {% for error in form.fax.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="field entity-form__text-field">
+                <header class="entity-form__field-title">Email</header>
+                {{ form.email }}
+                {% for error in form.email.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>            
+            <div class="field entity-form__text-field">
+                <header class="entity-form__field-title">Website</header>
+                {{ form.site }}
+                {% for error in form.site.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="field entity-form__text-field">
+                <header class="entity-form__field-title">Facebook</header>
+                {{ form.facebook }}
+                {% for error in form.facebook.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="field entity-form__text-field">
+                <header class="entity-form__field-title">Twitter</header>
+                {{ form.twitter }}
+                {% for error in form.twitter.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="field social-links-field">
+                <div class="social-links-container"></div>
+                {{ form.social_links }}
+                <span class="add-more-social-link">add more</span>
+                {% for error in form.social_links.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="field about-us-field">
+                <header class="entity-form__field-title">About Us</header>
+                {{ form.about }}
+            </div>
+            <div class="field tags-field">
+                <header class="entity-form__field-title">
+                    Tags 
+                    <span class="tags-counter-container">
+                        (Max 10 Tags)
+                        <span class="tags-counter">
+                            0
+                        </span> of 10 
+                    </span>
+                </header>
+                {{ form.tags }}
+                {% for error in form.tags.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="venue-account-types">
+        <h1>
+            Venue Type
+        </h1>
+        <div class="venue-account-types-content">
+            {% for pk, choice in form.fields.types.widget.choices %}
+                <div class="checkbox block">
+                    <input {% for venue_type in venue_account.types.all %}{% if venue_type.pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_types_{{ forloop.counter0 }}" value="{{ pk }}" name="types" />
+                    <label for="id_types_{{ forloop.counter0 }}"></label>
+                    <label for="id_types_{{ forloop.counter0 }}">{{ choice }}</label>
+                </div>
+            {% endfor %}
+        </div>
+        <input type="submit" name="submitoptions" class="button standart submit" value="Save" />
+    </div>    
+</form>
+{% endblock %}

@@ -1,0 +1,26 @@
+<script type="text/javascript">
+    ;(function(window, document, undefined) {
+        var Cityfusion = {
+            {% if user_location.user_location_lat_lon %}
+            "userLocationLat": {{ user_location.user_location_lat_lon.1 }},
+            "userLocationLng": {{ user_location.user_location_lat_lon.0 }},
+            {% endif %}
+
+            {% if user_location.user_location_city %}
+            "userLocationCityId": {{ user_location.user_location_city.id }},
+            "userLocationCityName": "{{ user_location.user_location_city.name }}",
+            {% endif %}
+
+            {% if user_location.user_location_region %}
+            "userLocationRegionId": {{ user_location.user_location_region.id }},
+            "userLocationRegionName": "{{ user_location.user_location_region.name }}",
+            {% endif %}
+
+            {% if user_location.is_canada %}
+            "isCanada": true
+            {% endif %}
+        }
+
+        window.Cityfusion = Cityfusion;        
+    })(window, document);
+</script>

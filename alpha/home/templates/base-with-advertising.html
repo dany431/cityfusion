@@ -1,0 +1,19 @@
+{% extends 'base.html' %} 
+{% load advertising_tags %}
+
+{% block advertising %}
+    <div>
+        <div class="rotation-right-container">
+            {% advertising_group "300x250|300x250|300x250" %}
+        </div>
+    </div>
+{% endblock%}
+
+{% block advertising_header %}
+    <div class="header-ads-wrapper">
+        <div class="header-ads-container">
+            {% advertising "728x90" %}
+        </div>
+        <div class="clr"></div>
+    </div>
+{% endblock %}

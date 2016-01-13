@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang='en'>
+<head>
+    {% load analytics %}
+    {% load common_tags %}
+    {% load gears %}
+    {% googleanalyticsjs %}
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    {% block meta %}
+        <title>City Fusion</title>
+        <meta name="keywords" content="" />
+        <meta name="description" content="" />
+    {% endblock meta %}
+
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    {% css_asset_tag 'base-combine.css' %}
+    
+    <!--[if IE 7]>
+      <link rel="stylesheet" href="{{ STATIC_URL }}font-awesome/css/font-awesome-ie7.min.css">
+    <![endif]-->
+
+    <!--[if (gte IE 6)&(lte IE 8)]>
+        <script type="text/javascript" src="{{STATIC_URL}}js/libs/selectivizr-min.js"></script>
+    <![endif]-->
+    {% include 'variables.html' %}
+    {% js_asset_tag 'base-combine.js' %}
+    <script type="text/javascript" src="/facebook-for-turbolinks.js"></script>
+
+    {% block head %}
+
+    {% endblock %}
+    {% block menuhead %}
+
+    {% endblock %}
+    {% block userena_head %}{% endblock %}
+</head>
+<body {% block body_attributes %}{% endblock %}>
+    {% block body_inner %}
+        {% googleanalyticsjs_push %}
+        {% block messages %}
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endblock messages %}
+        {% block advertising_header %}{% endblock %}
+        <div class="wrapper outer-wrapper">
+            <div class="primary-header" data-no-turbolink>
+                <div class="content">
+                    <div class="logo">
+                        <a href="/">
+                            <img src="{{STATIC_URL}}images/logo.png" alt="" />
+                        </a>
+                    </div>
+
+                    <div class="sign-up-wrapper-top">
+                        {% include '_signin_signup.html' %}
+                    </div>
+
+                    <div class="clr"></div>
+                </div>
+            </div>
+            <div class="menu-header">
+                <div class="content">
+                    {% include '_main_navigation.html' %}
+                </div>
+            </div>
+            <div class="page-container {{ page_type }}">
+                {% block featured %}{% endblock %}
+
+                <div class="content-wrapper">
+                    {% block page %}{% endblock %}
+                    {% block advertising %}{% endblock%}
+                    <div class="clr"></div>
+                </div>
+            </div>
+
+            <div class="footer-wrapper" data-no-turbolink>
+                <div class="footer-container top">
+                    {% block advertising_footer %}{% endblock %}
+                </div>
+            </div>
+
+            <div class="footer-site-links" data-no-turbolink>
+                <div class="footer-content">
+                    <div class="footer-container">
+                        <div class="copyright">&copy; 2014 Cityfusion</div>
+                        <div class="footer-site-map">
+                            <ul>
+                                <li><a href="{% url 'staticpage' alias='faq' %}">FAQ</a></li>
+                                <li><a href="/feedback/">Feedback</a></li>
+                                <li><a href="{% url 'staticpage' alias='advertising' %}">Advertising</a></li>
+                                <li><a href="{% url 'staticpage' alias='privacy_policy' %}">Privacy Policy</a></li>
+                                <li class="last">
+                                    <a href="{% url 'staticpage' alias='terms_of_service' %}">Terms of Service</a>
+                                </li>
+                                <li class="last">
+                                    {% like_button "http://"|add:request.META.HTTP_HOST %}
+                                </li>
+                                <li class="last">
+                                    <a href="https://www.facebook.com/cityfusion.ca" target="_blank" class="footer-icon facebook"></a>
+                                    <a href="http://www.twitter.com/cityfusionca" target="_blank" class="footer-icon twitter"></a>
+                                    <a href="mailto:info@cityfusion.ca" class="footer-icon email"></a>
+                                    <a href="https://plus.google.com/115070192756503195680"
+                                       target="_blank"
+                                       class="footer-icon google"
+                                       rel="publisher"></a>
+                                    <a href="#" class="footer-icon youtube"></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="clr"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include '_search_pad_popup.html' %}        
+
+        {% load event_tags %}
+        {% auth_required_popup %}
+
+        <script type="text/javascript">
+            function onBlur(el) {
+                var elem = $(el),
+                    placeholderText = elem.data("placeholder");
+
+                if(elem.val() === "") {
+                    elem.val(placeholderText);
+                }
+            }
+            function onFocus(el) {
+                var elem = $(el),
+                    placeholderText = elem.data("placeholder");
+
+                if(elem.val() === placeholderText) {
+                    elem.val("");
+                }
+            }
+        </script>
+        {% include 'django_facebook/_facebook_js.html' %}
+    {% endblock body_inner %}
+    <!-- Google Code for Remarketing Tag -->
+    <script type="text/javascript">
+        /* <![CDATA[ */
+        var google_conversion_id = 984489518;
+        var google_custom_params = window.google_tag_params;
+        var google_remarketing_only = true;
+        /* ]]> */
+    </script>
+    <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+    </script>
+    <noscript>
+        <div style="display:inline;">
+            <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/984489518/?value=0&amp;guid=ON&amp;script=0"/>
+        </div>
+    </noscript>
+</body>
+</html>

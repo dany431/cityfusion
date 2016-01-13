@@ -1,0 +1,20 @@
+{% load endless %}
+{% load event_tags %}
+{% load common_tags %}
+{% load cf_pagination %}
+
+{% paginate 6 profile.in_the_loop_events using "in_the_loop_page" as in_the_loop_events %}
+
+<div class="account-entry-wrapper entry-wrapper">
+    {% for event in in_the_loop_events %}
+        <div class="entry-info">
+            {% short_single_event event %}
+            <div class="clr"></div>
+        </div>
+    {% empty %}
+        <p>
+            no in the loop events
+        </p>
+    {%endfor%}
+    {% cf_pagination %}
+</div>

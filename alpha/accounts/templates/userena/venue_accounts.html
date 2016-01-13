@@ -1,0 +1,24 @@
+{% if venue_accounts %}
+<div class="venue-accounts-list">
+    <header>
+        My Venues
+    </header>
+    <ul>
+        {% for venue_account in venue_accounts %}
+            <li>
+                <a class="mngp" href="{% url 'private_venue_account' slug=venue_account.slug %}">
+                    {{ venue_account.venue.name }}
+                </a>
+                <a href="javascript:void(0);"
+                   data-type="delete_venue_button"
+                   data-venue-account-id="{{ venue_account.id }}">
+                    Delete
+                </a> |
+                <a href="{% url 'account_set_context' context=venue_account.slug %}">
+                    Change User
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}

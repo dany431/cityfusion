@@ -1,0 +1,68 @@
+{% load date_formatting %}
+{% load cropping %}
+{% load event_tags %}
+{% load location %}
+
+<a href="{% event_link event %}" itemprop="url">
+    <div class="entry-img-prev">
+        {% if event.picture %}
+            <img src="{% cropped_thumbnail event.image "cropping" width=60 %}" height="60" width="60" alt="" itemprop="photo" />
+        {% else %}
+            <img src="{{STATIC_URL}}images/default-event.jpg" height="60" width="60" alt="" itemprop="photo" />
+        {% endif %}
+    </div>
+    <div class="entry-details-wrapper">
+        <div class="entry-title">
+            <div class="title" itemprop="summary">
+                {{ event.name }}
+            </div>
+            <div class="enty-extra-date">
+                {% if event.event_type == "MULTIDAY" %}
+                    {{event.first_occurrence.start_time|date:"N d"}} - {{event.last_occurrence.start_time|date:"N d"}}
+                {% endif %}
+            </div>
+        </div>
+        <div class="entry-date">
+            {% if event.event_type == "SINGLE" %}
+                <div class="entry-date-day">
+                    <span class="event-date">{{event.start_time|date:"l, N d"}}</span>
+                </div>
+                <div class="entry-date-time">
+                    <span class="event-time">{{event.start_time|just_time|lower}} - {{event.end_time|just_time|lower}}</span>
+                </div>
+                <time itemprop="startDate" datetime="{{ event.start_time|date:"c" }}"></time>
+                <time itemprop="endDate" datetime="{{ event.end_time|date:"c" }}"></time>
+            {% endif %}
+            {% if event.event_type == "MULTIDAY" %}
+                <div class="entry-date-day">
+                    <span class="event-date">{{event.start_time|date:"l, N d"}}</span>
+                </div>
+                <div class="entry-date-time">
+                    <span class="event-time">{{event.start_time|just_time|lower}} - {{event.end_time|just_time|lower}}*</span>
+                </div>
+                <time itemprop="startDate" datetime="{{ event.start_time.start_time|date:"c" }}"></time>
+                <time itemprop="endDate" datetime="{{ event.end_time|date:"c" }}"></time>
+            {% endif %}
+        </div>
+        <div class="event-location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">
+            <div class="event-name-and-street" itemprop="name">
+                {{ event.venue.name }}
+            </div>
+            <div class="event-city-name">
+                {{ event.venue.city.name_std }}, {{ event.venue.city.region.name_std|region_shortcut }}
+                <span class="hidden" itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">
+                    <span itemprop="street-address">
+                        {% if event.venue.street_number %}{{ event.venue.street_number }} {% endif %}{{ event.venue.street }}
+                    </span>
+                    <span itemprop="locality">{{ event.venue.city.name_std }}</span>
+                    <span itemprop="region">{{ event.venue.city.region.name_std|region_shortcut }}</span>
+                </span>
+                <span itemprop="geo" itemscope itemtype="http://data-vocabulary.org/Geo">
+                    <meta itemprop="latitude" content="{{ event.venue.location.y }}" />
+                    <meta itemprop="longitude" content="{{ event.venue.location.x }}" />
+                </span>
+            </div>
+        </div>
+
+    </div>
+</a>

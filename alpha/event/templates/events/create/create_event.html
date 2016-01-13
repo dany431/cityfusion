@@ -1,0 +1,55 @@
+{% extends 'base-with-advertising.html' %}
+{% load cropping %}
+{% load selectable_tags %}
+{% load advertising_tags %}
+{% load gears %}
+
+{% block head %}
+    {% include_ui_theme 'ui-lightness' %}
+    
+    <link href="{{STATIC_URL}}ajaxuploader/css/fileuploader.css" rel="stylesheet" type="text/css" />
+    <link href="{{STATIC_URL}}image_cropping/css/jquery.Jcrop.min.css" rel="stylesheet" type="text/css" />
+
+    {% css_asset_tag 'create-event-combine.css' %}
+    
+
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places&language=en"></script>
+    
+    <!-- end time -->
+    {{ form.map }}
+    {{ form.media.js }}
+    <script type="text/javascript">
+        var crsf_token = "{{ csrf_token }}";
+    </script>
+
+    <script src="{{STATIC_URL}}selectable/js/jquery.dj.selectable.js" type="text/javascript"></script>
+    <script src="{{STATIC_URL}}ckeditor/ckeditor/ckeditor.js" type="text/javascript"></script>
+    {% js_asset_tag 'create-event-combine.js' %}
+
+{% endblock %}
+
+ {% block body_attributes %}class="old"{% endblock %}
+
+{% block title %} > Post Event{% endblock %}
+
+{% block page %}
+    <div class="primary-content {% if form.city_required %}new_venue{% endif %}">
+        <div class="event-posting">
+            <h1>
+                Post Event
+            </h1>
+            {% include 'events/create/_form.html' %}
+        </div>
+        <div class="event-posting-tips">            
+            <h1>
+                Event posting tips
+            </h1>
+            {% include 'events/create/posting-tips.html' %}            
+        </div>
+        <div class="clear"></div>
+    </div>
+{% endblock %}
+
+{% block advertising %}{% endblock %}
+
+{% block advertising_footer %}{% endblock %}

@@ -1,0 +1,37 @@
+{% load cropping %}
+{% load featured_event %}
+{% if in_email %}
+    <a target="_blank" href="{{site}}{% featured_event_link event %}" style="text-decoration:none; border: none; display: block; line-height:0px;">
+        <img src="{{site}}/{% feature_event_as_image event %}" style="border-collapse:collapse; border: none;" />
+    </a>
+{% else %}
+    <div class="features">
+        <a href="{% featured_event_link event %}">
+            <div class="featured-img-wrapper">
+                {% if event.picture %}
+                    <img src="{% cropped_thumbnail event.image "cropping" width=154 %}" height="154" width="154" alt="">
+                {% else %}
+                    <img src="/static/images/default-event.jpg" height="154" width="154" alt="">
+                {% endif %}
+            </div>
+            <div class="featured-img-details">
+                <div class="featured-img-details-wrapper">
+                    <div class="featured-title">
+                        <a href="{% featured_event_link event %}">{{event.name}}</a>
+                    </div>
+                    <div class="featured-date">
+                        {{ event.start_time|date:"b d, Y | fA"|title }}-{{event.end_time|date:"fA"|title}}
+                    </div>
+                    <div class="featured-venue">
+                        {{ event.venue.name }}
+                    </div>
+                    <div class="featured-details-link">
+                        <a href="{% featured_event_link event %}">
+                            event details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+{% endif %}

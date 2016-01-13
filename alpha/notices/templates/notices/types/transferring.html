@@ -1,0 +1,30 @@
+<div class="notice-item" data-type="notice_item">
+    {% csrf_token %}
+    {{ event_count }}
+    {% if event_count == 1 %}
+        event has
+    {% else %}
+        events have
+    {% endif %}
+    been transferred to you by CityFusion administration on the {{ date }}.
+    <br/>
+    You can
+    <a class="b" href="{{ accept_link }}" data-type="transferring_accept_link" data-notice-id="{{ notice_id }}">
+        Accept
+    </a>
+    or
+    <a class="b" href="{{ reject_link }}" data-type="transferring_reject_link" data-notice-id="{{ notice_id }}">
+        Reject
+    </a> them.
+    <br/><br/>
+    <div data-type="accordion">
+        <h3>Event list:</h3>
+        <div>
+            {% for name, link in event_links %}
+                <p>
+                    <a href="{{ link }}" target="_blank">{{ name }}</a>
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+</div>

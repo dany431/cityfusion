@@ -1,0 +1,60 @@
+{% extends 'cf-admin/base.html' %}
+{% load event_tags %}
+{% load admin_menu %}
+{% load endless %}
+{% load cf_pagination %}
+
+{% block head %}
+    <link href="{{STATIC_URL}}styles/profile-table.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block page %}
+    <div class="tabs-container">
+        {% cf_admin_menu "report_event" %}
+
+        <div class="box visible">            
+            <table class="profile-table" celpadding="0" cellspacing="0">
+                <tr>
+                    <th>Event</th>
+                    <th>Reporter</th>
+                    <th>Message</th>
+                    <th>Edit</th>
+                    <th>Mark as processed</th>
+                </tr>
+                {% paginate 10 reports %}
+                {% for report in reports %}
+                <tr>
+                    <td>
+                        <div class="entry-wrapper">
+                            {% event_block report.event %}
+                        </div>
+                    </td>
+                    <td>
+                        {% if report.account %}
+                            <a href="{% url "admin:accounts_account_change" report.account.id %}" target="_blank">{{ report.account.user.username }}</a>
+                        {% else %}
+                            Anonym user
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ report.message }}
+                    </td>                    
+                    <td>
+                        <a href="{% url "admin:event_event_change" report.event.id %}" target="_blank">Edit</a>
+                    </td>
+                    <td>
+                        <a href="{% url "report_event_process" report.id %}">Mark as processed</a>
+                    </td>
+                </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            No reports was found
+                        </td>
+                    </tr>
+                {% endfor %}                
+            </table>
+            {% cf_pagination %}
+        </div>
+    </div>
+{% endblock %}

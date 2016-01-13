@@ -1,0 +1,79 @@
+{% load dictionary_tags %}
+
+<span class="types-title">Pick the type of ad(s) they want to put on City Fusion:</span>
+<div class="advertising-types">
+    <table cellspacing="0" cellpadding="0">
+        <tr>
+            <th>
+                AD SIZE
+            </th>
+            <th class="ad-type-col">
+                CPM
+                <br/>
+                <span>(Price for 1000 views)</span>
+            </th>
+            {% if settings.ADVERTISING_TYPE_CPC_ON %}
+            <th class="ad-type-col">
+                CPC
+                <br/>
+                <span>(Price for 1 click)</span>
+            </th>
+            {% endif %}
+        </tr>
+
+        {% for advertising_type in advertising_types %}
+        <tr>
+            <td class="ad-type-description-col"
+                data-ad-type="t_{{ advertising_type.width }}_{{ advertising_type.height }}">
+                <input type="checkbox"
+                       id="id_advertising_type_{{ advertising_type.id }}"
+                       value="{{ advertising_type.id }}"
+                       name="advertising_types"
+                       data-type="advertising-type"
+                       data-ad-type="{{ advertising_type.id }}"
+                       {% if advertising_type.id in chosen_advertising_types %}checked="checked"{% endif %} />
+                <span for="id_advertising_type_{{ advertising_type.id }}">
+                    {{ advertising_type }}
+                </span>
+            </td>
+            <td class="ad-type-col">
+                <div class="ad-type-col-wrapper">
+                    <div class="checkbox">
+                        <input type="checkbox"
+                               id="advertising_type_{{ advertising_type.id }}_cpm"
+                               value="CPM"
+                               name="advertising_payment_type.{{ advertising_type.id }}"
+                               data-ad-type="{{ advertising_type.id }}"
+                               autocomplete="off"
+                               {% ifequal chosen_advertising_payment_types|keyvalue:advertising_type.id "CPM" %}checked="checked"{% endifequal %}>
+                        <label for="advertising_type_{{ advertising_type.id }}_cpm"></label>
+                    </div>
+                    {{ advertising_type.cpm_price }}
+                </div>
+            </td>
+            {% if settings.ADVERTISING_TYPE_CPC_ON %}
+                <td class="ad-type-col">
+                    <div class="ad-type-col-wrapper">
+                        <div class="checkbox">
+                            <input type="checkbox"
+                                   id="advertising_type_{{ advertising_type.id }}_cpc"
+                                   value="CPC"
+                                   name="advertising_payment_type.{{ advertising_type.id }}"
+                                   data-ad-type="{{ advertising_type.id }}"
+                                   autocomplete="off"
+                                   {% ifequal chosen_advertising_payment_types|keyvalue:advertising_type.id "CPC" %}checked="checked"{% endifequal %}>
+                            <label for="advertising_type_{{ advertising_type.id }}_cpc"></label>
+                        </div>
+                        {{ advertising_type.cpc_price }}
+                    </div>
+                </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        <tr class="empty-tr">
+            <td></td>
+            <td class="ad-type-col"></td>
+            {% if settings.ADVERTISING_TYPE_CPC_ON %}<td class="ad-type-col"></td>{% endif %}
+        </tr>
+    </table>
+</div>

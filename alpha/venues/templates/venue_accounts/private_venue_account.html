@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load date_formatting %}
+{% load cropping %}
+{% load gears %}
+
+{% block head %}
+    {% css_asset_tag "view-venue-combine.css" %}    
+
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places&language=en"></script>
+    <script>
+        var venue_account_id = {{ venue_account.id }}
+            venue_account_latitude = {{ venue_account.venue.location.y }},
+            venue_account_longtitude = {{ venue_account.venue.location.x }};
+    </script>
+    {% js_asset_tag "view-venue-combine.js" %}
+{% endblock %}
+
+{% block page %}
+    <h1>
+        {{ venue_account.venue.name }}
+    </h1>
+    <div class="account-profile account-primary-content">
+        <div class="primary-wrapper">
+            {% include "actions/venue_actions.html" %}
+            {% include "venue_accounts/_venue_details.html" %}
+
+            {% if venue_account.tags.count > 0 %}
+                <div class="tags">
+                    {% for tag in venue_account.tags.all %}
+                        <a href="{% url 'event_browse' %}?function=tags&tag={{ tag.name|urlencode }}">{{ tag }}</a>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="tabs-container">
+                <div class="tabs-head">
+                    <table class="tabs" data-page-id="private-venue-account" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td data-tab-id="venue-events" {% if active_tab == "venue-events" %}class="current"{% endif %}>
+                                <span>Venue Events</span>
+                            </td>
+                            <td data-tab-id="venue-featured-events" {% if active_tab == "venue-featured-events" %}class="current"{% endif %}>
+                                <span>Featured Events</span>
+                            </td>
+                            <td data-tab-id="venue-archived-events" {% if active_tab == "venue-archived-events" %}class="current"{% endif %}>
+                                <span>Archived events</span>
+                            </td>
+                            <td data-tab-id="venue-advertising-stats" {% if active_tab == "venue-advertising-stats" %}class="current"{% endif %}>
+                               <span>Advertising Stats</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="box{% if active_tab == "venue-events" %} visible{% endif %}">
+                    {% include 'venue_accounts/_venue_events_table.html' %}
+                </div>
+                <div class="box{% if active_tab == "venue-featured-events" %} visible{% endif %}">
+                    {% include 'venue_accounts/_venue_featured_events_table.html' %}
+                </div>
+                <div class="box{% if active_tab == "venue-archived-events" %} visible{% endif %}">
+                    {% include 'venue_accounts/_venue_archived_events_table.html' %}
+                </div>
+                <div class="box{% if active_tab == "venue-advertising-stats" %} visible{% endif %} advertising-stats">
+                    {% include 'advertising/stats/list.html' with campaigns=venue_account.campaigns %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings account-help-container">
+        <a class="button special" href="{% url 'userena_profile_detail' venue_account.account.user.username %}">
+            My Account
+        </a>
+        <a class="button" href="{% url 'advertising_setup' %}">
+            Create New Ad
+        </a>
+        <a class="button" href="{% url 'edit_venue_account' slug=venue_account.slug %}">
+            Edit Profile
+        </a>
+        <div class="public-or-private">
+            <div class="radio">
+                <input {% if venue_account.public %}checked="checked"{% endif %} id="venue_account_make_public" type="radio" value="public" name="public_or_private"> 
+                <label for="venue_account_make_public"></label>
+                <label for="venue_account_make_public">Public</label>
+            </div>
+            <div class="radio">
+                <input {% if not venue_account.public %}checked="checked"{% endif %} id="venue_account_make_private" type="radio" value="private" name="public_or_private"> 
+                <label for="venue_account_make_private"></label>
+                <label for="venue_account_make_private">Private</label>
+            </div>
+        </div>
+    </div>
+{% endblock %}

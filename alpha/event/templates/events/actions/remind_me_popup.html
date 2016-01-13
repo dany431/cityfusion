@@ -1,0 +1,60 @@
+{% load common_tags %}
+{% if account %}
+    <div class="remind-me-popup event-actions-popup" data-no-turbolink>
+        <div class="in-the-loop-popup-content">
+            <h1>
+                Remind Me
+            </h1>
+            <div class="content">
+                {% if account.reminder_with_email %}
+                    A reminder will be sent to your email {% if account.reminder_with_sms %} and phone text {% endif %}
+                {% else %}
+                    {% if account.reminder_with_sms %} 
+                        A reminder will be sent to your phone text 
+                    {% endif %}
+                {% endif %}
+                {% if account|args:'DAYS'|call:'check_reminder_type_state' %}
+                    <p>
+                        {{ account.reminder_days_before_event }} days before this event begins.
+                    </p>
+                {% endif %}
+                {% if account|args:'HOURS'|call:'check_reminder_type_state' %}
+                    <p>
+                        {{ account.reminder_hours_before_event }} hours before this event begins.
+                    </p>
+                {% endif %}
+                {% if account|args:'WEEKDAY'|call:'check_reminder_type_state' %}
+                    <p>
+                        every {{ account.reminder_weekday|lower }} before this event begins.
+                    </p>
+                {% endif %}
+                {% if account|args:'EACH_DAY'|call:'check_reminder_type_state' %}
+                    <p>
+                        at {{ account.reminder_each_day_at_time|date:"f A"|lower }} each day,
+                        starting from {{ account.reminder_each_day_from }} days before this event begins.
+                    </p>
+                {% endif %}
+                To change your reminder options, <a href="{% url 'reminder_settings' %}">click here</a>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="remind-me-popup event-actions-popup" data-no-turbolink>
+        <div class="in-the-loop-popup-content">
+            <h1>
+                Remind Me
+            </h1>
+            <div class="content">
+                Please log in or create an account to use this feature. Be sent a reminder on the website, email or text and never miss another event again.
+            </div>
+        </div>
+        <div class="popup-buttons">
+            <a href="{% url 'userena_signin' %}" class="popup-button">
+                Log in
+            </a>
+            <a href="{% url 'userena_signup' %}"  class="popup-button">
+                Create Account
+            </a>
+        </div>
+    </div>
+{% endif %}
